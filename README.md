@@ -1,42 +1,120 @@
-# 📚 BookTrack
+# BookTrack
 
-BookTrack est une application desktop de gestion de bibliothèque développée avec :
-
-- Electron
-- Angular
-- Prisma ORM
-- SQLite
-
-L'application permet de gérer :
-- les livres ;
-- les auteurs ;
-- les catégories ;
-- les emprunts ;
-- les avis utilisateurs.
+Application desktop de gestion de bibliothèque développée avec Electron, Angular, Prisma et SQLite.
 
 ---
 
-# 🚀 Technologies utilisées
+# Description
+
+BookTrack est une application desktop permettant de gérer une bibliothèque locale.
+
+L’application permet :
+
+- la gestion des auteurs ;
+- la gestion des livres ;
+- la gestion des catégories ;
+- la gestion des emprunts ;
+- la gestion des avis ;
+- l’affichage de statistiques dans un dashboard.
+
+Le projet a été développé avec une architecture moderne utilisant :
+
+- Electron pour l’application desktop ;
+- Angular pour l’interface utilisateur ;
+- Prisma comme ORM ;
+- SQLite comme base de données locale.
+
+---
+
+# Technologies utilisées
 
 ## Frontend
-- Angular 21
+
+- Angular
 - TypeScript
-- Angular Signals
-- Angular Router
-- HTML / CSS
+- HTML
+- CSS
 
 ## Backend Desktop
+
 - Electron
 - Electron Forge
-- IPC Electron
 
 ## Base de données
+
 - Prisma ORM
 - SQLite
 
 ---
 
-# 📁 Architecture du projet
+# Fonctionnalités principales
+
+## Dashboard
+
+- nombre total de livres ;
+- nombre total d’auteurs ;
+- statistiques générales.
+
+## Gestion des auteurs
+
+- ajouter un auteur ;
+- modifier un auteur ;
+- supprimer un auteur.
+
+## Gestion des catégories
+
+- ajouter une catégorie ;
+- modifier une catégorie ;
+- supprimer une catégorie.
+
+## Gestion des livres
+
+- ajouter un livre ;
+- modifier un livre ;
+- supprimer un livre ;
+- associer plusieurs catégories ;
+- associer un auteur ;
+- disponibilité automatique.
+
+## Gestion des emprunts
+
+- créer un emprunt ;
+- rendre un livre ;
+- suppression d’un emprunt ;
+- gestion automatique de la disponibilité du livre.
+
+## Gestion des avis
+
+- ajouter un avis ;
+- modifier un avis ;
+- supprimer un avis ;
+- notation des livres.
+
+---
+
+# Architecture du projet
+
+```txt
+Angular Renderer
+↓
+Services Angular
+↓
+window.api
+↓
+preload.ts
+↓
+ipcRenderer.invoke()
+↓
+main.ts
+↓
+Prisma Client
+↓
+SQLite
+```
+
+---
+
+# Structure du projet
 
 ```txt
 booktrack/
@@ -46,16 +124,17 @@ booktrack/
 │   ├── seed.ts
 │   └── migrations/
 │
-├── renderer/app/
-│   └── src/app/
-│       ├── pages/
-│       ├── services/
-│       ├── components/
-│       └── types/
-│
 ├── src/
 │   ├── main/
-│   └── preload/
+│   ├── preload/
+│   └── renderer/
+│
+├── renderer/app/
+│   ├── src/app/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── components/
+│   │   └── types/
 │
 ├── package.json
 └── README.md
@@ -63,57 +142,117 @@ booktrack/
 
 ---
 
-# ⚙️ Installation du projet
+# Installation du projet
 
 ## 1. Cloner le repository
 
 ```bash
-git clone <url-du-repository>
+git clone https://github.com/mickbron/BookTrack.git
 ```
 
 ## 2. Entrer dans le dossier
 
 ```bash
-cd booktrack
+cd BookTrack
 ```
 
-## 3. Installer les dépendances
+## 3. Installer les dépendances principales
 
 ```bash
 npm install
 ```
 
+## 4. Installer les dépendances Angular
+
+```bash
+cd renderer/app
+npm install
+cd ../..
+```
+
 ---
 
-# 🗄️ Base de données Prisma
+# Configuration Prisma
 
 ## Générer Prisma Client
 
 ```bash
-npm run prisma:generate
+npx prisma generate
 ```
 
-## Créer les migrations
+## Lancer les migrations
 
 ```bash
-npm run prisma:migrate
-```
-
-## Remplir la base avec des données de test
-
-```bash
-npm run prisma:seed
+npx prisma migrate dev
 ```
 
 ## Ouvrir Prisma Studio
 
 ```bash
-npm run prisma:studio
+npx prisma studio
 ```
 
 ---
 
-# ▶️ Lancer l'application
+# Seeder la base de données
+
+Le projet contient un fichier `seed.ts` permettant d’ajouter des données de démonstration.
+
+## Lancer le seed
+
+```bash
+npm run prisma:seed
+```
+
+---
+
+# Lancer l’application
+
+## Mode développement
+
+```bash
+npm start
+```
+
+Cette commande :
+
+- lance Angular ;
+- compile Electron ;
+- démarre l’application desktop.
+
+---
+
+# Build Angular
+
+```bash
+npm run build:angular
+```
+
+---
+
+# Générer l’application Electron
+
+## Package
+
+```bash
+npm run package
+```
+
+## Build final
+
+```bash
+npm run make
+```
+
+---
+
+# Scripts disponibles
+
+## Démarrer le projet
+
+```bash
+npm start
+```
 
 ## Build Angular
 
@@ -121,109 +260,69 @@ npm run prisma:studio
 npm run build:angular
 ```
 
-## Démarrer Electron
+## Lancer Prisma Studio
 
 ```bash
-npm start
+npm run prisma:studio
+```
+
+## Réinitialiser la base
+
+```bash
+npm run db:reset
+```
+
+## Lancer le seed
+
+```bash
+npm run prisma:seed
 ```
 
 ---
 
-# ✅ Fonctionnalités
+# Base de données
 
-## 📚 Gestion des livres
-- Ajouter un livre
-- Modifier un livre
-- Supprimer un livre
-- Associer un auteur
-- Associer des catégories
+## Modèles principaux
 
-## ✍️ Gestion des auteurs
-- Ajouter un auteur
-- Modifier un auteur
-- Supprimer un auteur
+- Utilisateur
+- Auteur
+- Livre
+- Catégorie
+- LivreCategorie
+- Emprunt
+- Avis
 
-## 🏷️ Gestion des catégories
-- Ajouter une catégorie
-- Supprimer une catégorie
-- Relation Many-To-Many avec les livres
+## Relations importantes
 
-## 📦 Gestion des emprunts
-- Emprunter un livre
-- Retourner un livre
-- Statut des emprunts
-
-## ⭐ Gestion des avis
-- Ajouter un avis
-- Donner une note
-- Ajouter un commentaire
-
-## 📊 Dashboard
-- Nombre de livres
-- Nombre d’auteurs
-- Nombre de catégories
-- Nombre d’emprunts
-- Nombre d’avis
-- Moyenne des notes
+- Auteur 1 → N Livre
+- Utilisateur 1 → N Emprunt
+- Livre 1 → N Emprunt
+- Utilisateur 1 → N Avis
+- Livre 1 → N Avis
+- Livre N ↔ N Catégorie
 
 ---
 
-# 🔗 Relations Prisma utilisées
+# Sécurité Electron
 
-## One-To-Many
-- Un auteur possède plusieurs livres
-- Un utilisateur possède plusieurs emprunts
-- Un livre possède plusieurs avis
+L’application utilise :
 
-## Many-To-Many
-- Un livre possède plusieurs catégories
-- Une catégorie possède plusieurs livres
+- `contextIsolation`;
+- `preload.ts`;
+- `contextBridge`.
 
----
-
-# 🧠 Concepts Angular utilisés
-
-- Standalone Components
-- Angular Signals
-- Computed Signals
-- Services Angular
-- Routing Angular
-- FormsModule
-- @for
-- @if
+Angular ne communique jamais directement avec Node.js.
 
 ---
 
-# 🧠 Concepts Prisma utilisés
-
-- Prisma Client
-- Relations SQL
-- Migrations
-- Aggregate
-- Count
-- Seed
-- SQLite
-
----
-
-
-# 👨‍💻 Auteur
+# Auteur
 
 Projet réalisé par :
 
-**Mickbron Tasse koagne**
-
-Projet académique réalisé dans le cadre d’un examen Electron + Angular + Prisma.
+**TASSE KOAGNE MickBron**
 
 ---
 
-# 📌 Remarques
+# Licence
 
-Ce projet utilise Electron pour transformer une application Angular en application desktop multiplateforme.
-
-Les communications entre Angular et Electron se font via :
-- IPC Main
-- IPC Renderer
-- Preload Script
-
-La base de données SQLite est gérée par Prisma ORM.
+Projet académique réalisé dans le cadre d’un apprentissage Electron + Angular + Prisma.
