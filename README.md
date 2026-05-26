@@ -301,6 +301,8 @@ npm run prisma:seed
 - Livre 1 → N Avis
 - Livre N ↔ N Catégorie
 
+- Pour plus de détails dans Diagramme.jpg
+
 ---
 
 # Sécurité Electron
