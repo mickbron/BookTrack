@@ -1,0 +1,69 @@
+<div class="container">
+  <div class="page-header">
+    <h1>Gestion des catégories</h1>
+  </div>
+
+  <div class="form-card">
+    <h2>
+      @if (editingId === null) {
+        Nouvelle catégorie
+      } @else {
+        Modifier la catégorie
+      }
+    </h2>
+
+    <input
+      type="text"
+      [(ngModel)]="nom"
+      placeholder="Nom de la catégorie"
+    />
+
+    <div class="actions">
+      <button class="btn-primary" (click)="saveCategory()">
+        @if (editingId === null) {
+          Ajouter
+        } @else {
+          Enregistrer
+        }
+      </button>
+
+      @if (editingId !== null) {
+        <button class="btn-secondary" type="button" (click)="cancelEdit()">
+          Annuler
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="section-title">
+    <h2>Liste des catégories</h2>
+  </div>
+
+  @if (categories().length === 0) {
+    <div class="empty-state">
+      Aucune catégorie enregistrée.
+    </div>
+  }
+
+  <div class="categories-grid">
+    @for (categorie of categories(); track categorie.id) {
+      <div class="category-card">
+        <div>
+          <span class="category-badge">
+            {{ categorie.nom }}
+          </span>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn-secondary" (click)="startEditCategory(categorie)">
+            Modifier
+          </button>
+
+          <button class="btn-danger" (click)="deleteCategory(categorie.id)">
+            Supprimer
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

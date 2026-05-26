@@ -1,0 +1,102 @@
+<div class="dashboard-page">
+  <section class="hero-library">
+    <div>
+      <p class="eyebrow">BookTrack</p>
+      <h1>Bienvenue dans la bibliothèque</h1>
+    </div>
+
+    <div class="hero-number">
+      <span>{{ stats().totalLivres }}</span>
+      <small>livres enregistrés</small>
+    </div>
+  </section>
+
+  <section class="quick-stats">
+    <div class="quick-item">
+      <span>Auteurs</span>
+      <strong>{{ stats().totalAuteurs }}</strong>
+    </div>
+
+    <div class="quick-item">
+      <span>Catégories</span>
+      <strong>{{ stats().totalCategories }}</strong>
+    </div>
+
+    <div class="quick-item">
+      <span>Emprunts</span>
+      <strong>{{ stats().totalEmprunts }}</strong>
+    </div>
+
+    <div class="quick-item">
+      <span>Avis</span>
+      <strong>{{ stats().totalAvis }}</strong>
+    </div>
+  </section>
+
+  <section class="dashboard-layout">
+    <div class="panel availability-panel">
+      <h2>Disponibilité des livres</h2>
+
+      <div class="availability-row">
+        <div>
+          <span class="dot green"></span>
+          Livres disponibles
+        </div>
+        <strong>{{ stats().livresDisponibles }}</strong>
+      </div>
+
+      <div class="availability-row">
+        <div>
+          <span class="dot red"></span>
+          Livres empruntés
+        </div>
+        <strong>{{ stats().livresIndisponibles }}</strong>
+      </div>
+
+      <div class="progress-box">
+        <div class="progress-info">
+          <span>Taux de disponibilité</span>
+          <strong>{{ tauxDisponibilite() }}%</strong>
+        </div>
+
+        <div class="progress">
+          <div
+            class="progress-fill"
+            [style.width.%]="tauxDisponibilite()"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel note-panel">
+      <h2>Qualité des lectures</h2>
+
+      <div class="rating-display">
+        <span>{{ moyenneArrondie() }}</span>
+        <small>/5</small>
+      </div>
+
+      <p>
+        Moyenne calculée à partir de
+        <strong>{{ stats().totalAvis }}</strong>
+        avis enregistrés.
+      </p>
+    </div>
+
+    <div class="panel total-panel">
+      <h2>Total des éléments</h2>
+
+      <div class="total-number">
+        {{ totalElements() }}
+      </div>
+
+      <p>
+        Somme des livres, auteurs, catégories, emprunts et avis.
+      </p>
+    </div>
+  </section>
+
+  <button class="refresh-button" (click)="loadStats()">
+    Actualiser les statistiques
+  </button>
+</div>

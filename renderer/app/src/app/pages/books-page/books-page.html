@@ -1,0 +1,231 @@
+<div class="container">
+  <div class="page-header">
+    <h1>Gestion des livres</h1>
+  </div>
+
+  <div class="form-card">
+    <h2>
+      @if (editingId === null) {
+        Nouveau livre
+      } @else {
+        Modifier le livre
+      }
+    </h2>
+
+      @if (formMessage()) {
+        <p
+          class="form-message"
+          [class.error]="formSubmitted()"
+          [class.success]="!formSubmitted()"
+        >
+          {{ formMessage() }}
+        </p>
+      }
+
+    <input
+      type="text"
+      placeholder="Titre du livre"
+      [(ngModel)]="titre"
+    />
+
+    @if (formSubmitted() && !titre.trim()) {
+      <p class="field-error">Le titre est obligatoire.</p>
+    }
+
+
+    <textarea
+      placeholder="Description du livre"
+      rows="4"
+      [(ngModel)]="description"
+    ></textarea>
+
+    @if (formSubmitted() && description.trim() && description.trim().length < 10) {
+      <p class="field-error">
+        La description doit contenir au moins 10 caractères.
+      </p>
+    }
+
+    <select [(ngModel)]="auteurId">
+      @for (auteur of auteurs(); track auteur.id) {
+        <option [ngValue]="auteur.id">
+          {{ auteur.nom }}
+        </option>
+      }
+    </select>
+
+    @if (formSubmitted() && auteurId === null) {
+      <p class="field-error">Veuillez sélectionner un auteur.</p>
+    }
+
+    @if (editingId !== null) {
+
+      <label class="checkbox-line">
+        <input
+          type="checkbox"
+          [(ngModel)]="disponible"
+        />
+        Disponible
+      </label>
+
+    }
+
+    <div class="category-zone">
+      <h3>Catégories</h3>
+
+      @if (categories().length === 0) {
+        <p class="muted">Aucune catégorie disponible.</p>
+      }
+
+      <div class="category-list">
+        @for (categorie of categories(); track categorie.id) {
+          <label
+            class="category-option"
+            [class.selected]="isCategorySelected(categorie.id)"
+          >
+            <input
+              type="checkbox"
+              [checked]="isCategorySelected(categorie.id)"
+              (change)="toggleCategorySelection(categorie.id)"
+            />
+            {{ categorie.nom }}
+          </label>
+        }
+      </div>
+    </div>
+
+    <div class="actions">
+      <button
+        class="btn-primary"
+        (click)="saveBook()"
+        [disabled]="!isBookFormValid()"
+        [disabled]="auteurs().length === 0"
+      >
+
+        @if (editingId === null) {
+          Ajouter
+        } @else {
+          Enregistrer
+        }
+      </button>
+
+      @if (editingId !== null) {
+        <button
+          class="btn-secondary"
+          type="button"
+          (click)="cancelEdit()"
+        >
+          Annuler
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="filters-bar">
+
+    <input
+      type="text"
+      placeholder="Rechercher un livre..."
+      [ngModel]="search()"
+      (ngModelChange)="search.set($event)"
+    />
+
+    <select
+      [ngModel]="statusFilter()"
+      (ngModelChange)="statusFilter.set($event)"
+    >
+      <option value="ALL">
+        Tous les livres
+      </option>
+
+      <option value="AVAILABLE">
+        Disponibles
+      </option>
+
+      <option value="BORROWED">
+        Empruntés
+      </option>
+    </select>
+
+  </div>
+
+  <div class="section-title">
+    <h2>Liste des livres</h2>
+  </div>
+
+  @if (filteredBooks().length === 0) {
+    <div class="empty-state">
+      Aucun livre enregistré.
+    </div>
+  } @else {
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Titre</th>
+            <th>Description</th>
+            <th>Auteur</th>
+            <th>Catégories</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (livre of filteredBooks(); track livre.id) {
+            <tr>
+              <td>
+                <strong>{{ livre.titre }}</strong>
+              </td>
+
+              <td>
+                {{ livre.description || 'Aucune description' }}
+              </td>
+
+              <td>
+                {{ livre.auteur?.nom || 'Aucun auteur' }}
+              </td>
+
+              <td>
+                @if (livre.categories && livre.categories.length > 0) {
+                  @for (item of livre.categories; track item.categorieId) {
+                    <span class="tag">
+                      {{ item.categorie.nom }}
+                    </span>
+                  }
+                } @else {
+                  <span class="muted">Aucune catégorie</span>
+                }
+              </td>
+
+              <td>
+                @if (livre.disponible) {
+                  <span class="status available">Disponible</span>
+                } @else {
+                  <span class="status unavailable">Emprunté</span>
+                }
+              </td>
+
+              <td>
+                <div class="card-actions">
+                  <button
+                    class="btn-secondary"
+                    (click)="startEditBook(livre)"
+                  >
+                    Modifier
+                  </button>
+
+                  <button
+                    class="btn-danger"
+                    (click)="deleteBook(livre.id)"
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

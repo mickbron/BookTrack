@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/prisma/generated"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum StatutEmprunt {
+  EN_COURS
+  RENDU
+}
+
+model Utilisateur {
+  id           Int      @id @default(autoincrement())
+  nom          String
+  email        String   @unique
+  dateCreation DateTime @default(now())
+
+  emprunts Emprunt[]
+  avis     Avis[]
+}
+
+model Auteur {
+  id         Int     @id @default(autoincrement())
+  nom        String
+  biographie String?
+
+  livres Livre[]
+}
+
+model Livre {
+  id           Int      @id @default(autoincrement())
+  titre        String
+  description  String?
+  disponible   Boolean  @default(true)
+  dateCreation DateTime @default(now())
+
+  auteurId Int
+  auteur   Auteur @relation(fields: [auteurId], references: [id])
+
+  categories LivreCategorie[]
+  emprunts   Emprunt[]
+  avis       Avis[]
+}
+
+model Categorie {
+  id  Int    @id @default(autoincrement())
+  nom String @unique
+
+  livres LivreCategorie[]
+}
+
+model LivreCategorie {
+  livreId     Int
+  categorieId Int
+
+  livre     Livre     @relation(fields: [livreId], references: [id])
+  categorie Categorie @relation(fields: [categorieId], references: [id])
+
+  @@id([livreId, categorieId])
+}
+
+model Emprunt {
+  id          Int           @id @default(autoincrement())
+  dateEmprunt DateTime      @default(now())
+  dateRetour  DateTime?
+  statut      StatutEmprunt @default(EN_COURS)
+
+  utilisateurId Int
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+
+  livreId Int
+  livre   Livre @relation(fields: [livreId], references: [id])
+}
+
+model Avis {
+  id           Int      @id @default(autoincrement())
+  note         Int
+  commentaire  String?
+  dateCreation DateTime @default(now())
+
+  utilisateurId Int
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+
+  livreId Int
+  livre   Livre @relation(fields: [livreId], references: [id])
+}

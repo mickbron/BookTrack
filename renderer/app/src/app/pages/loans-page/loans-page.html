@@ -1,0 +1,144 @@
+<div class="container">
+  <div class="page-header">
+    <h1>Gestion des emprunts</h1>
+  </div>
+
+  <div class="top-grid">
+    <section class="form-card">
+      <h2>Ajouter un utilisateur</h2>
+      @if (userFormMessage()) {
+        <p
+          class="form-message"
+          [class.error]="userFormSubmitted()"
+          [class.success]="!userFormSubmitted()"
+        >
+          {{ userFormMessage() }}
+        </p>
+      }
+
+      <input
+        type="text"
+        [(ngModel)]="nouveauNom"
+        placeholder="Nom de l'utilisateur"
+      />
+      @if (userFormSubmitted() && !nouveauNom.trim()) {
+        <p class="field-error">
+          Le nom de l’utilisateur est obligatoire.
+        </p>
+      }
+
+      <input
+        type="email"
+        [(ngModel)]="nouvelEmail"
+        placeholder="Email"
+      />
+      @if (userFormSubmitted() && !nouvelEmail.trim()) {
+        <p class="field-error">
+          L’email est obligatoire.
+        </p>
+      }
+
+      <button class="btn-primary" (click)="addUser()">
+        Ajouter utilisateur
+      </button>
+    </section>
+
+    <section class="form-card">
+      <h2>Créer un emprunt</h2>
+
+      @if (utilisateurs().length === 0) {
+        <p class="muted">Aucun utilisateur disponible.</p>
+      }
+
+      @if (livres().length === 0) {
+        <p class="muted">Aucun livre disponible pour l'emprunt.</p>
+      }
+
+      <select [(ngModel)]="utilisateurId">
+        @for (utilisateur of utilisateurs(); track utilisateur.id) {
+          <option [ngValue]="utilisateur.id">
+            {{ utilisateur.nom }} - {{ utilisateur.email }}
+          </option>
+        }
+      </select>
+
+      <select [(ngModel)]="livreId">
+        @for (livre of livres(); track livre.id) {
+          <option [ngValue]="livre.id">
+            {{ livre.titre }}
+          </option>
+        }
+      </select>
+
+      <button
+        class="btn-primary"
+        (click)="addLoan()"
+        [disabled]="utilisateurs().length === 0 || livres().length === 0"
+      >
+        Emprunter
+      </button>
+    </section>
+  </div>
+
+  <div class="section-title">
+    <h2>Liste des emprunts</h2>
+  </div>
+
+  @if (emprunts().length === 0) {
+    <div class="empty-state">
+      Aucun emprunt enregistré.
+    </div>
+  }
+
+  <div class="loans-grid">
+    @for (emprunt of emprunts(); track emprunt.id) {
+      <div class="loan-card">
+        <div class="loan-header">
+          <div>
+            <h3>{{ emprunt.livre?.titre || 'Livre inconnu' }}</h3>
+            <p class="muted">
+              Emprunté par {{ emprunt.utilisateur?.nom || 'Utilisateur inconnu' }}
+            </p>
+          </div>
+
+          @if (emprunt.statut === 'EN_COURS') {
+            <span class="status active">En cours</span>
+          } @else {
+            <span class="status returned">Rendu</span>
+          }
+        </div>
+
+        <div class="loan-info">
+          <p>
+            <strong>Email :</strong>
+            {{ emprunt.utilisateur?.email || 'Non disponible' }}
+          </p>
+
+          <p>
+            <strong>Date emprunt :</strong>
+            {{ emprunt.dateEmprunt | date:'dd/MM/yyyy HH:mm' }}
+          </p>
+
+          @if (emprunt.dateRetour) {
+            <p>
+              <strong>Date retour :</strong>
+              {{ emprunt.dateRetour | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+          }
+        </div>
+
+        <div class="card-actions">
+          @if (emprunt.statut === 'EN_COURS') {
+            <button class="btn-secondary" (click)="returnLoan(emprunt.id)">
+              Rendre
+            </button>
+          }
+
+          <button class="btn-danger" (click)="deleteLoan(emprunt.id)">
+            Supprimer
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

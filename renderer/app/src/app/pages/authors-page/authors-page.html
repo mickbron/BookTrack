@@ -1,0 +1,100 @@
+<div class="container">
+  <div class="page-header">
+    <h1>Gestion des auteurs</h1>
+  </div>
+
+  <div class="form-card">
+    <h2>
+      @if (editingId === null) {
+        Nouvel auteur
+      } @else {
+        Modifier l’auteur
+      }
+    </h2>
+
+    @if (formMessage()) {
+
+      <p
+        class="form-message"
+        [class.error]="formSubmitted()"
+        [class.success]="!formSubmitted()"
+      >
+        {{ formMessage() }}
+      </p>
+    }
+
+    <input
+      type="text"
+      [(ngModel)]="nom"
+      placeholder="Nom de l'auteur"
+    />
+
+    <textarea
+      [(ngModel)]="biographie"
+      placeholder="Biographie"
+      rows="4"
+    ></textarea>
+    @if (biographyError()) {
+
+      <p class="field-error">
+        {{ biographyError() }}
+      </p>
+    }
+
+    <div class="actions">
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="saveAuthor()"
+      >
+        @if (editingId === null) {
+          Ajouter
+        } @else {
+          Enregistrer
+        }
+      </button>
+
+      @if (editingId !== null) {
+        <button class="btn-secondary" type="button" (click)="cancelEdit()">
+          Annuler
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="section-title">
+    <h2>Liste des auteurs</h2>
+  </div>
+
+  @if (auteurs().length === 0) {
+    <div class="empty-state">
+      Aucun auteur enregistré.
+    </div>
+  }
+
+  <div class="authors-grid">
+    @for (auteur of auteurs(); track auteur.id) {
+      <div class="author-card">
+        <div>
+          <h3>{{ auteur.nom }}</h3>
+
+          @if (auteur.biographie) {
+            <p>{{ auteur.biographie }}</p>
+          } @else {
+            <p class="muted">Aucune biographie.</p>
+          }
+        </div>
+
+        <div class="card-actions">
+          <button class="btn-secondary" (click)="startEditAuthor(auteur)">
+            Modifier
+          </button>
+
+          <button class="btn-danger" (click)="deleteAuthor(auteur.id)">
+            Supprimer
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

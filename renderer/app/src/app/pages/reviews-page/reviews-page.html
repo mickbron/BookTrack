@@ -1,0 +1,143 @@
+<div class="container">
+  <div class="page-header">
+    <h1>Avis des Utilisateurs</h1>
+  </div>
+
+  <div class="form-card">
+    <h2>
+      @if (editingId === null) {
+        Nouvel avis
+      } @else {
+        Modifier l’avis
+      }
+    </h2>
+
+    @if (reviewFormMessage()) {
+
+      <p
+        class="form-message"
+        [class.error]="reviewFormSubmitted()"
+        [class.success]="!reviewFormSubmitted()"
+      >
+        {{ reviewFormMessage() }}
+      </p>
+
+    }
+
+    <label>
+      Utilisateur
+      <select [(ngModel)]="utilisateurId">
+        @for (utilisateur of utilisateurs(); track utilisateur.id) {
+          <option [ngValue]="utilisateur.id">
+            {{ utilisateur.nom }}
+          </option>
+        }
+      </select>
+    </label>
+
+    <label>
+      Livre
+      <select [(ngModel)]="livreId">
+        @for (livre of livres(); track livre.id) {
+          <option [ngValue]="livre.id">
+            {{ livre.titre }}
+          </option>
+        }
+      </select>
+    </label>
+
+    <label>
+      Note
+      <input
+        type="number"
+        min="1"
+        max="5"
+        [(ngModel)]="note"
+      />
+
+    </label>
+     @if (reviewFormSubmitted() && noteError()) {
+
+        <p class="field-error">
+          {{ noteError() }}
+        </p>
+
+      }
+
+
+    <textarea
+      rows="4"
+      [(ngModel)]="commentaire"
+      placeholder="Commentaire"
+    ></textarea>
+
+    <div class="actions">
+      <button class="btn-primary" (click)="saveReview()">
+        @if (editingId === null) {
+          Ajouter
+        } @else {
+          Enregistrer
+        }
+      </button>
+
+      @if (editingId !== null) {
+        <button class="btn-secondary" type="button" (click)="cancelEdit()">
+          Annuler
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="section-title">
+    <h2>Liste des avis</h2>
+  </div>
+
+  @if (avis().length === 0) {
+    <div class="empty-state">
+      Aucun avis enregistré.
+    </div>
+  }
+
+  <div class="reviews-grid">
+    @for (item of avis(); track item.id) {
+      <div class="review-card">
+        <div class="review-header">
+          <div>
+            <h3>{{ item.livre?.titre || 'Livre inconnu' }}</h3>
+            <p class="muted">
+              Par {{ item.utilisateur?.nom || 'Utilisateur inconnu' }}
+            </p>
+          </div>
+
+          <span class="rating">
+            {{ item.note }}/5
+          </span>
+        </div>
+
+        @if (item.commentaire) {
+          <p class="comment">
+            {{ item.commentaire }}
+          </p>
+        } @else {
+          <p class="muted">
+            Aucun commentaire.
+          </p>
+        }
+
+        <p class="date">
+          {{ item.dateCreation | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+
+        <div class="card-actions">
+          <button class="btn-secondary" (click)="startEditReview(item)">
+            Modifier
+          </button>
+
+          <button class="btn-danger" (click)="deleteReview(item.id)">
+            Supprimer
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
